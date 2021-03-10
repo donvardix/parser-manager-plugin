@@ -53,34 +53,11 @@ function prsrmngr_admin_menu() {
     );
 }
 
-function prsrmngr_page() {
-
-    $url = 'https://neon.ua/product/_AMD_AM4_Ryzen_5_5600X_Tray_6x3_7_GHz_Turbo_Boost_4_6_GHz_L3_32Mb_Zen_3_7_nm_TDP_65W_100100000065__924998/';
-
-    $ch = curl_init( $url );
-    curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
-    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-    $html = curl_exec( $ch );
-    curl_close( $ch );
-
-    $doc = new DOMDocument();
-    $doc->loadHTML( $html );
-
-//    $test = $doc->getElementById( 'store' );
-    $elements = $doc->getElementsByTagName( 'span' );
-
-
-    foreach ( $elements as $elem ) {
-        if( $elem->hasAttribute('itemprop') && 'price' == $elem->getAttribute('itemprop') ) {
-            echo '<br>',$elem->nodeValue;
-        }
-    }
-
-
-//    var_dump( $test );
-
-//    die( '<pre>' . print_r( $elements->item(0)->attributes->item(0), true ) . '</pre>' );
-}
+function prsrmngr_page() { ?>
+    <div class="wrap">
+        <?php parser_output(); ?>
+    </div>
+<?php }
 
 function prsrmngr_settings_page() {
     global $plgnnm_options; ?>
@@ -102,5 +79,35 @@ function prsrmngr_settings_page() {
         </table>
     </div>
 <?php }
+
+function parser_output() {
+	$args = array(
+		array(
+			'url'               => 'https://neon.ua/product/_AMD_AM4_Ryzen_5_5600X_Tray_6x3_7_GHz_Turbo_Boost_4_6_GHz_L3_32Mb_Zen_3_7_nm_TDP_65W_100100000065__924998/',
+			'parser_method'     => 'strpos_parser',
+			'get_html_method'   => 'wp_method',
+			'start'             => '<span itemprop="price">',
+			'end'               => '</span>'
+		),
+		array(
+			'url'               => 'https://neon.ua/product/USB_Flash_Drive_32Gb_Goodram_Twister_Black_Silver_17_9Mbps_UTS20320K0R11_856626/',
+			'parser_method'     => 'strpos_parser',
+			'get_html_method'   => 'wp_method',
+			'start'             => '<span itemprop="price">',
+			'end'               => '</span>'
+		)
+	);
+
+	require_once( 'includes/Parser.php' );
+	$parser = new Parser( $args );
+
+//	$parser->test();
+
+	$elements = $parser->start();
+
+	foreach ( $elements as $el ) {
+		echo $el . '<br />';
+	}
+}
 
 add_action( 'admin_menu', 'prsrmngr_admin_menu' );
