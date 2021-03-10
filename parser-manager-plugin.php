@@ -55,7 +55,10 @@ function prsrmngr_admin_menu() {
 
 function prsrmngr_page() { ?>
     <div class="wrap">
-        <?php parser_output(); ?>
+        <form action="" method="post">
+            <input type="submit" name="parser_start" value="Start">
+        </form>
+        <?php prsrmngr_parser_output(); ?>
     </div>
 <?php }
 
@@ -80,34 +83,76 @@ function prsrmngr_settings_page() {
     </div>
 <?php }
 
-function parser_output() {
-	$args = array(
-		array(
-			'url'               => 'https://neon.ua/product/_AMD_AM4_Ryzen_5_5600X_Tray_6x3_7_GHz_Turbo_Boost_4_6_GHz_L3_32Mb_Zen_3_7_nm_TDP_65W_100100000065__924998/',
-			'parser_method'     => 'strpos_parser',
-			'get_html_method'   => 'wp_method',
-			'start'             => '<span itemprop="price">',
-			'end'               => '</span>'
-		),
-		array(
-			'url'               => 'https://neon.ua/product/USB_Flash_Drive_32Gb_Goodram_Twister_Black_Silver_17_9Mbps_UTS20320K0R11_856626/',
-			'parser_method'     => 'strpos_parser',
-			'get_html_method'   => 'wp_method',
-			'start'             => '<span itemprop="price">',
-			'end'               => '</span>'
-		)
-	);
+function prsrmngr_parser_output() {
+    global $wpdb;
 
-	require_once( 'includes/Parser.php' );
-	$parser = new Parser( $args );
+//	$result = $wpdb->get_results( $wpdb->prepare(
+//		"SELECT `name`, `value` FROM `{$wpdb->prefix}prsrmngr_parser_data`
+//        LEFT JOIN `{$wpdb->prefix}prsrmngr_parser` ON `{$wpdb->prefix}prsrmngr_parser_data`.`parser_id` = `{$wpdb->prefix}prsrmngr_parser`.`id`"
+//	) );
+
+	if ( isset( $_POST['parser_start'] ) ) {
+		$result = $wpdb->get_results(
+			"SELECT `id`, `url`, `start`, `end` FROM `{$wpdb->prefix}prsrmngr_parser`", ARRAY_A
+		);
+
+		require_once( 'includes/Parser.php' );
+		$parser = new Parser( $result );
 
 //	$parser->test();
 
-	$elements = $parser->start();
+		$elements = $parser->start();
 
-	foreach ( $elements as $el ) {
-		echo $el . '<br />';
-	}
+		foreach ( $elements as $parser_id => $value ) {
+			$wpdb->insert( $wpdb->prefix . 'prsrmngr_parser_data',
+				array( 'value' => $value, 'parser_id' => $parser_id ),
+				array( '%s', '%s' )
+			);
+		}
+    }
 }
+
+function prsrmngr_settings() {
+
+}
+
+function prsrmngr_db_create() {
+	global $wpdb;
+
+	$sql = "CREATE TABLE IF NOT EXISTS `" . $wpdb->prefix . "prsrmngr_parser` (
+			id bigint NOT NULL AUTO_INCREMENT,
+			name varchar(55) NOT NULL,
+            url text NOT NULL,
+            start text NOT NULL,
+            end text NOT NULL,
+            updated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			UNIQUE KEY id (id)
+		);";
+	$wpdb->query( $sql );
+
+	$sql = "CREATE TABLE IF NOT EXISTS `" . $wpdb->prefix . "prsrmngr_parser_data` (
+			id bigint NOT NULL AUTO_INCREMENT,
+			value text NOT NULL,
+            parser_id bigint NOT NULL,
+            updated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			UNIQUE KEY id (id)
+		);";
+	$wpdb->query( $sql );
+}
+
+function prsrmngr_delete_options() {
+	global $wpdb;
+
+//	delete_option( 'wp_simyz_chat_username' );
+//	$wpdb->query( "DROP TABLE IF EXISTS `" . $wpdb->prefix . "simyzchat_questions`;" );
+}
+
+function prsrmngr_activation() {
+	prsrmngr_settings();
+	prsrmngr_db_create();
+	register_uninstall_hook( __FILE__, 'prsrmngr_delete_options' );
+}
+
+register_activation_hook( __FILE__, 'prsrmngr_activation' );
 
 add_action( 'admin_menu', 'prsrmngr_admin_menu' );

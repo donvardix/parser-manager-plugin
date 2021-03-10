@@ -2,6 +2,8 @@
 
 class Parser {
 
+	public bool $wp_method = true;
+
 	private array $data;
 	private array $parser_args;
 
@@ -9,41 +11,28 @@ class Parser {
 		$this->data = $data;
 	}
 
-	private function parser( $html ) {
-		if ( 'dom_parser' == $this->parser_args['parser_method'] ) {
-			return $this->dom_parser( $html );
-		} else {
-			return $this->strpos_parser( $html );
+	function start(): array {
+		$values = array();
+		foreach ( $this->data as $args ) {
+			$this->parser_args = $args;
+			$values[ $this->parser_args['id'] ] = $this->parser( $this->get_html() );
 		}
+
+		return $values;
 	}
 
-	private function get_html(): string {
-		if ( 'wp_method' == $this->parser_args['get_html_method'] && function_exists( 'wp_remote_get' ) ) {
-			return $this->wp_method();
-		} else {
-			return $this->curl_method();
-		}
-	}
-
-	private function strpos_parser( $html ): string {
+	private function parser( $html ): string {
 		$delete_before = substr( $html, strpos( $html, $this->parser_args['start'] ) + strlen( $this->parser_args['start'] ) );
 
 		return substr( $delete_before, 0, strpos( $delete_before, $this->parser_args['end'] ) );
 	}
 
-	private function dom_parser( $html ): array {
-		$dom = new DOMDocument();
-		$dom->loadHTML( $html );
-
-		$elements = $dom->getElementsByTagName( 'span' );
-		$value    = array();
-		foreach ( $elements as $elem ) {
-			if ( $elem->hasAttribute( 'itemprop' ) && 'price' == $elem->getAttribute( 'itemprop' ) ) {
-				$value[] = $elem->nodeValue;
-			}
+	private function get_html(): string {
+		if ( $this->wp_method && function_exists( 'wp_remote_get' ) ) {
+			return $this->wp_method();
+		} else {
+			return $this->curl_method();
 		}
-
-		return $value;
 	}
 
 	private function wp_method(): string {
@@ -60,16 +49,6 @@ class Parser {
 		curl_close( $ch );
 
 		return $html;
-	}
-
-	function start(): array {
-		$values = array();
-		foreach ( $this->data as $args ) {
-			$this->parser_args = $args;
-			$values[] = $this->parser( $this->get_html() );
-		}
-
-		return $values;
 	}
 
 	function test() {
