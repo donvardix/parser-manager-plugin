@@ -86,29 +86,39 @@ function prsrmngr_settings_page() {
 function prsrmngr_parser_output() {
     global $wpdb;
 
-//	$result = $wpdb->get_results( $wpdb->prepare(
-//		"SELECT `name`, `value` FROM `{$wpdb->prefix}prsrmngr_parser_data`
-//        LEFT JOIN `{$wpdb->prefix}prsrmngr_parser` ON `{$wpdb->prefix}prsrmngr_parser_data`.`parser_id` = `{$wpdb->prefix}prsrmngr_parser`.`id`"
-//	) );
-
 	if ( isset( $_POST['parser_start'] ) ) {
-		$result = $wpdb->get_results(
-			"SELECT `id`, `url`, `start`, `end` FROM `{$wpdb->prefix}prsrmngr_parser`", ARRAY_A
-		);
+		$result = $wpdb->get_results( "SELECT `id`, `url`, `start`, `end` FROM `{$wpdb->prefix}prsrmngr_parser`", ARRAY_A );
 
 		require_once( 'includes/Parser.php' );
 		$parser = new Parser( $result );
 
-//	$parser->test();
-
 		$elements = $parser->start();
-
 		foreach ( $elements as $parser_id => $value ) {
 			$wpdb->insert( $wpdb->prefix . 'prsrmngr_parser_data',
 				array( 'value' => $value, 'parser_id' => $parser_id ),
 				array( '%s', '%s' )
 			);
 		}
+	}
+
+	$parsers = $wpdb->get_results( "SELECT `id`, `name` FROM `{$wpdb->prefix}prsrmngr_parser`" );
+
+	foreach ( $parsers as $parser ) {
+		echo '<a href="?page=parser-manager-plugin.php&id=' . $parser->id . '">' . $parser->name . '</a><br />';
+	}
+
+	if ( isset( $_GET['id'] ) ) {
+	    echo '<hr />';
+
+		$parser_data = $wpdb->get_results( $wpdb->prepare(
+			"SELECT `value`, `updated` FROM `{$wpdb->prefix}prsrmngr_parser_data` WHERE `parser_id` = %d", absint( $_GET['id'] )
+		) );
+
+		echo '<table>';
+		foreach ( $parser_data as $data ) {
+			echo "<tr><td>{$data->updated}</td><td>{$data->value}</td></tr>";
+		}
+		echo '</table>';
     }
 }
 
