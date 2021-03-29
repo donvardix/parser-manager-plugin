@@ -1,5 +1,9 @@
 <?php
 
+if( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
+if( ! class_exists('Parser') ) {
+
 class Parser {
 
 	public bool $wp_method = true;
@@ -61,3 +65,5 @@ class Parser {
 	}
 
 }
+
+} // class_exists check
