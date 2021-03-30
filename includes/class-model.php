@@ -4,6 +4,7 @@ if( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 if( ! class_exists('Model') ) {
 
+
 class Model {
 	private $wpdb;
 	private string $wpdb_parser, $wpdb_parser_data;

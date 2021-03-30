@@ -4,6 +4,7 @@ if( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 if( ! class_exists('Frontend_Settings') ) {
 
+
 class Frontend_Settings {
 
 	function __construct() {

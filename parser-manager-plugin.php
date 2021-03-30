@@ -30,6 +30,7 @@ if( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 if( ! class_exists('Parser_Manager') ) {
 
+
 class Parser_Manager {
 
 	function __construct() {

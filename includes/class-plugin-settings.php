@@ -4,6 +4,7 @@ if( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 if( ! class_exists('Plugin_Settings') ) {
 
+
 class Plugin_Settings {
 
 	function __construct() {
