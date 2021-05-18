@@ -87,21 +87,20 @@ class Frontend_Settings {
         </div>
 	<?php }
 
-	function settings_page() {
-		global $plgnnm_options; ?>
+	function settings_page() { ?>
 		<div class="wrap">
 			<h1><?php _e( 'Title Name Page', 'plugin-name' ); ?></h1>
 			<table class="form-table">
 				<tr>
 					<th scope="row"><?php _e( 'Options1', 'plugin-name' ); ?></th>
 					<td>
-						<input name='plgnnm_options1' type='text' value='<?php echo $plgnnm_options['options1']; ?>' />
+						<input name='plgnnm_options1' type='text' value='<?php echo 'options1'; ?>' />
 					</td>
 				</tr>
 				<tr>
 					<th scope="row"><?php _e( 'Options2', 'plugin-name' ); ?></th>
 					<td>
-						<input name='plgnnm_options2' type='text' value='<?php echo $plgnnm_options['options2']; ?>' />
+						<input name='plgnnm_options2' type='text' value='<?php echo 'options2'; ?>' />
 					</td>
 				</tr>
 			</table>
