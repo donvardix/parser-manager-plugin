@@ -28,22 +28,15 @@ License: GPLv2 or later
 
 if( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if( ! class_exists('Parser_Manager') ) {
+require_once __DIR__ . '/vendor/autoload.php';
 
+register_activation_hook( __FILE__, array( new Parser_Manager_Loader, 'activation' ) );
 
-class Parser_Manager {
+add_action( 'plugins_loaded', 'parser_manager_init' );
 
-	function __construct() {
-		require_once 'includes/class-parser.php';
-		require_once 'includes/class-model.php';
-		require_once 'includes/class-frontend-settings.php';
-		require_once 'includes/class-plugin-settings.php';
-	}
+function parser_manager_init() {
 
-
+    $plugin =  new Parser_Manager_Loader;
+    $plugin->run();
 
 }
-
-new Parser_Manager();
-
-} // class_exists check

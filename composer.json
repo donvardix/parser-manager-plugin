@@ -1,0 +1,10 @@
+{
+  "require": {
+    "symfony/dom-crawler": "^5.3"
+  },
+  "autoload": {
+    "classmap": [
+      "includes/"
+    ]
+  }
+}

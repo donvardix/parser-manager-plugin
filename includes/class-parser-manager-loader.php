@@ -1,19 +1,15 @@
 <?php
 
-if( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if( ! class_exists('Plugin_Settings') ) {
+class Parser_Manager_Loader {
 
+	public function run() {
 
-class Plugin_Settings {
+        add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+    }
 
-	function __construct() {
-		register_activation_hook( __FILE__, array( $this, 'activation' ) );
-		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
-	}
-
-	function admin_menu() {
-	    $frontend_settings = new Frontend_Settings();
+    public function admin_menu() {
+	    $frontend_settings = new Parser_Manager_Settings;
 
 		add_menu_page(
 			__( 'Parser Manager', 'plugin-name' ),
@@ -45,11 +41,29 @@ class Plugin_Settings {
 			__( 'Settings', 'plugin-name' ),
 			'manage_options',
 			'parser-manager-plugin-settings.php',
-			array( $frontend_settings, 'settings_page' ),
+			array( $frontend_settings, 'settings_page' )
 		);
+
+
+        add_submenu_page(
+            'parser-manager-plugin.php',
+            __( 'Parser Test', 'plugin-name' ),
+            __( 'Parser Test', 'plugin-name' ),
+            'manage_options',
+            'parser-test.php',
+            array( new Crawler_Parser, 'test' )
+        );
 	}
 
-	function db_create() {
+    public function activation() {
+        $this->settings();
+        $this->db_create();
+        register_uninstall_hook( __FILE__, array( $this, 'delete_options' ) );
+    }
+
+    private function settings() {}
+
+    private function db_create() {
 		global $wpdb;
 
 		$sql = "CREATE TABLE IF NOT EXISTS `" . $wpdb->prefix . "parser` (
@@ -74,25 +88,11 @@ class Plugin_Settings {
 		$wpdb->query( $sql );
 	}
 
-	function delete_options() {
-		global $wpdb;
-
+    public function delete_options() {
+//		global $wpdb;
+//
 //        delete_option( 'wp_simyz_chat_username' );
 //        $wpdb->query( "DROP TABLE IF EXISTS `" . $wpdb->prefix . "simyzchat_questions`;" );
 	}
 
-	function settings() {
-
-	}
-
-	function activation() {
-		$this->settings();
-		$this->db_create();
-		register_uninstall_hook( __FILE__, array( $this, 'delete_options' ) );
-	}
-
 }
-
-new Plugin_Settings();
-
-} // class_exists check

@@ -7,7 +7,7 @@ if( ! class_exists('Model') ) {
 
 class Model {
 	private $wpdb;
-	private string $wpdb_parser, $wpdb_parser_data;
+	private $wpdb_parser, $wpdb_parser_data;
 
 	function __construct() {
 		global $wpdb;
@@ -20,8 +20,8 @@ class Model {
 	function parser_init() {
 		$result = $this->wpdb->get_results( "SELECT `id`, `url`, `start`, `end` FROM `{$this->wpdb_parser}`", ARRAY_A );
 
-		$parser = new Parser( $result );
-		$elements = $parser->start();
+		$parser = new Substr_Parser();
+		$elements = $parser->start( $result );
 		foreach ( $elements as $parser_id => $value ) {
 			$this->wpdb->insert( $this->wpdb_parser_data,
 				array( 'value' => $value, 'parser_id' => $parser_id ),
