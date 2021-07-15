@@ -3,7 +3,7 @@
 
 class Parser_Manager_Settings {
 
-    function parser_output() {
+    public function parser_output() {
         $model = new Model();
 
         if ( isset( $_POST['parser_start'] ) ) {
@@ -27,7 +27,7 @@ class Parser_Manager_Settings {
         }
     }
 
-    function parsers_page() { ?>
+	public function parsers_page() { ?>
         <div class="wrap">
             <form action="" method="post">
                 <input type="submit" name="parser_start" value="Start">
@@ -36,7 +36,7 @@ class Parser_Manager_Settings {
         </div>
     <?php }
 
-    function add_new_parser() {
+	public function add_new_parser() {
         if ( isset( $_POST['submit'] ) ) {
             $fields = array(
                 'name'  => sanitize_text_field( $_POST['prsrmngr_name'] ),
@@ -51,12 +51,16 @@ class Parser_Manager_Settings {
         require_once __DIR__ . '/views/html-add-new-page.php';
     }
 
-    function settings_page() {
+	public function settings_page() {
         if ( isset( $_POST['submit'] ) ) {
             echo 'submit';
         }
 
         require_once __DIR__ . '/views/html-settings-page.php';
     }
+
+	public function parsers_test_page() {
+		require_once __DIR__ . '/views/html-parsers-test-page.php';
+	}
 
 }

@@ -47,11 +47,11 @@ class Parser_Manager_Loader {
 
         add_submenu_page(
             'parser-manager-plugin.php',
-            __( 'Parser Test', 'plugin-name' ),
-            __( 'Parser Test', 'plugin-name' ),
+            __( 'Parsers Test', 'plugin-name' ),
+            __( 'Parsers Test', 'plugin-name' ),
             'manage_options',
-            'parser-test.php',
-            array( new Crawler_Parser, 'test' )
+            'parsers-test.php',
+            array( $frontend_settings, 'parsers_test_page' )
         );
 	}
 
