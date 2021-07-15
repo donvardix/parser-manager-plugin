@@ -37,6 +37,16 @@ class Parser_Manager_Settings {
     <?php }
 
 	public function add_new_parser() {
+        if ( isset( $_POST['test'] ) ) {
+	        $demo = Demo_Data::get( 'neon' );
+
+	        $crawler = new Crawler_Parser;
+	        $crawler->set_url( $demo['url'] );
+	        $crawler_result = $crawler->start( $demo['xpath'] );
+
+	        echo $crawler_result;
+        }
+
         if ( isset( $_POST['submit'] ) ) {
             $fields = array(
                 'name'  => sanitize_text_field( $_POST['prsrmngr_name'] ),
