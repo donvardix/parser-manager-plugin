@@ -6,6 +6,8 @@ class Parser_Manager_Loader {
 	public function run() {
 
         add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+
     }
 
     public function admin_menu() {
@@ -53,6 +55,11 @@ class Parser_Manager_Loader {
             'parsers-test.php',
             array( $frontend_settings, 'parsers_test_page' )
         );
+	}
+
+	public function enqueue_scripts() {
+		wp_enqueue_style( 'settings-style', plugins_url( 'assets/css/style.css', dirname( __FILE__ ) ) );
+		wp_enqueue_script( 'settings-script', plugins_url( 'assets/js/script.js', dirname( __FILE__ ) ), array( 'jquery' ), '', true );
 	}
 
     public function activation() {
