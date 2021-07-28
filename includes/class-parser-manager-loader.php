@@ -3,58 +3,93 @@
 
 class Parser_Manager_Loader {
 
+	private $frontend_settings;
+
 	public function run() {
 
-        add_action( 'admin_menu', array( $this, 'admin_menu' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'init', array( $this, 'plugin_init' ) );
+
+		if ( is_admin() ) {
+			$this->frontend_settings = new Parser_Manager_Settings;
+
+			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+
+			add_action( 'add_meta_boxes', array( $this, 'add_custom_box' ) );
+			add_action( 'save_post_parser', array( $this, 'save_meta_boxes' ) );
+
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		}
 
     }
 
-    public function admin_menu() {
-	    $frontend_settings = new Parser_Manager_Settings;
+	public function plugin_init() {
+		register_post_type(
+			'parser',
+			array(
+				'labels' => array(
+					'name'                  => __( 'Parsers', 'wcpv-returns' ),
+					'singular_name'         => __( 'Parser', 'wcpv-returns' ),
+					'all_items'             => __( 'All Parsers', 'wcpv-returns' ),
+					'search_items'          => __( 'Search Parsers', 'wcpv-returns' ),
+					'not_found'             => __( 'No parsers found.', 'wcpv-returns' ),
+					'not_found_in_trash'    => __( 'No parsers found in Trash.', 'wcpv-returns' ),
+					'menu_name'             => __( 'Parsers Manager', 'wcpv-returns' )
+				),
+				'public' => true,
+				'show_ui' => true,
+				'has_archive' => true,
+				'menu_icon' => 'dashicons-feedback',
+				'menu_position' => 21,
+				'supports' => array( 'title', 'author' ),
+			)
+		);
+	}
 
-		add_menu_page(
-			__( 'Parser Manager', 'plugin-name' ),
-			__( 'Parser Manager', 'plugin-name' ),
-			'manage_options',
-			'parser-manager-plugin.php',
-			array( $frontend_settings, 'parsers_page' ),
-			'dashicons-shortcode'
-		);
-		add_submenu_page(
-			'parser-manager-plugin.php',
-			__( 'Parser Manager', 'plugin-name' ),
-			__( 'Parser Manager', 'plugin-name' ),
-			'manage_options',
-			'parser-manager-plugin.php',
-			array( $frontend_settings, 'parsers_page' )
-		);
-		add_submenu_page(
-			'parser-manager-plugin.php',
-			__( 'Add New Parser', 'plugin-name' ),
-			__( 'Add New', 'plugin-name' ),
-			'manage_options',
-			'parser-manager-add-new.php',
-			array( $frontend_settings, 'add_new_parser' )
-		);
-		add_submenu_page(
-			'parser-manager-plugin.php',
+    public function admin_menu() {
+	    add_submenu_page(
+			'edit.php?post_type=parser',
 			__( 'Parser Manager Settings', 'plugin-name' ),
 			__( 'Settings', 'plugin-name' ),
 			'manage_options',
-			'parser-manager-plugin-settings.php',
-			array( $frontend_settings, 'settings_page' )
+			'parser-manager-settings.php',
+			array( $this->frontend_settings, 'settings_page' )
 		);
-
-
         add_submenu_page(
-            'parser-manager-plugin.php',
+            'edit.php?post_type=parser',
             __( 'Parsers Test', 'plugin-name' ),
             __( 'Parsers Test', 'plugin-name' ),
             'manage_options',
             'parsers-test.php',
-            array( $frontend_settings, 'parsers_test_page' )
+            array( $this->frontend_settings, 'parsers_test_page' )
         );
+	}
+
+	public function add_custom_box() {
+		add_meta_box(
+			'parser_data',
+			'Parser Data',
+			array( $this->frontend_settings, 'meta_box_data' ),
+			'parser',
+			'normal',
+			'high'
+		);
+		add_meta_box(
+			'parser_param',
+			'Parser Parameters',
+			array( $this->frontend_settings, 'meta_box_param' ),
+			'parser',
+			'normal',
+			'high'
+		);
+	}
+
+	public function save_meta_boxes( $post_id ) {
+		if ( ! wp_verify_nonce( $_POST['prsrmngr_nonce'], 'meta_box_param' ) )
+			return;
+
+		$link = $_POST['prsrmngr_link'];
+
+		update_post_meta( $post_id, '_prsrmngr_link', $link );
 	}
 
 	public function enqueue_scripts() {
@@ -72,18 +107,6 @@ class Parser_Manager_Loader {
 
     private function db_create() {
 		global $wpdb;
-
-		$sql = "CREATE TABLE IF NOT EXISTS `" . $wpdb->prefix . "parser` (
-			id bigint NOT NULL AUTO_INCREMENT,
-			name varchar(55) NOT NULL,
-            url text NOT NULL,
-            start text NOT NULL,
-            end text NOT NULL,
-            updated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-			UNIQUE KEY id (id),
-			UNIQUE KEY name (name),
-		);";
-		$wpdb->query( $sql );
 
 		$sql = "CREATE TABLE IF NOT EXISTS `" . $wpdb->prefix . "parser_data` (
 			id bigint NOT NULL AUTO_INCREMENT,

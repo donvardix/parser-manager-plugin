@@ -1,5 +1,6 @@
 {
   "require": {
+    "php": "^7.1",
     "symfony/dom-crawler": "^5.3"
   },
   "autoload": {
