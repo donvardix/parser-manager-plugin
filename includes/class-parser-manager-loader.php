@@ -3,23 +3,16 @@
 
 class Parser_Manager_Loader {
 
-	private $frontend_settings;
-
 	public function run() {
-
 		add_action( 'init', array( $this, 'plugin_init' ) );
 
 		if ( is_admin() ) {
-			$this->frontend_settings = new Parser_Manager_Settings;
+			new Parser_Manager_Meta_Boxes;
 
 			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 
-			add_action( 'add_meta_boxes', array( $this, 'add_custom_box' ) );
-			add_action( 'save_post_parser', array( $this, 'save_meta_boxes' ) );
-
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		}
-
     }
 
 	public function plugin_init() {
@@ -46,13 +39,15 @@ class Parser_Manager_Loader {
 	}
 
     public function admin_menu() {
+	    $frontend_settings = new Parser_Manager_Settings;
+
 	    add_submenu_page(
 			'edit.php?post_type=parser',
 			__( 'Parser Manager Settings', 'plugin-name' ),
 			__( 'Settings', 'plugin-name' ),
 			'manage_options',
 			'parser-manager-settings.php',
-			array( $this->frontend_settings, 'settings_page' )
+			array( $frontend_settings, 'settings_page' )
 		);
         add_submenu_page(
             'edit.php?post_type=parser',
@@ -60,41 +55,23 @@ class Parser_Manager_Loader {
             __( 'Parsers Test', 'plugin-name' ),
             'manage_options',
             'parsers-test.php',
-            array( $this->frontend_settings, 'parsers_test_page' )
+            array( $frontend_settings, 'parsers_test_page' )
         );
 	}
 
-	public function add_custom_box() {
-		add_meta_box(
-			'parser_data',
-			'Parser Data',
-			array( $this->frontend_settings, 'meta_box_data' ),
-			'parser',
-			'normal',
-			'high'
-		);
-		add_meta_box(
-			'parser_param',
-			'Parser Parameters',
-			array( $this->frontend_settings, 'meta_box_param' ),
-			'parser',
-			'normal',
-			'high'
-		);
-	}
-
-	public function save_meta_boxes( $post_id ) {
-		if ( ! wp_verify_nonce( $_POST['prsrmngr_nonce'], 'meta_box_param' ) )
-			return;
-
-		$link = $_POST['prsrmngr_link'];
-
-		update_post_meta( $post_id, '_prsrmngr_link', $link );
-	}
-
 	public function enqueue_scripts() {
-		wp_enqueue_style( 'settings-style', plugins_url( 'assets/css/style.css', dirname( __FILE__ ) ) );
-		wp_enqueue_script( 'settings-script', plugins_url( 'assets/js/script.js', dirname( __FILE__ ) ), array( 'jquery' ), '', true );
+		wp_enqueue_style(
+			'settings-style',
+			plugins_url( 'assets/css/style.css',
+				dirname( __FILE__ ) )
+		);
+		wp_enqueue_script(
+			'settings-script',
+			plugins_url( 'assets/js/script.js', dirname( __FILE__ ) ),
+			array( 'jquery' ),
+			'',
+			true
+		);
 	}
 
     public function activation() {

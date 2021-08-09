@@ -1,10 +1,22 @@
 ( function( $ ) {
+    $( document ).ready( function() {
 
-    console.log( 'test' );
+        let method = $( '#prsrmngr_method' )
 
-    $( '#prsrmngr_test' ).on( 'click', function() {
-        console.log( $( this ) );
-        console.log( 'test2' );
+        if ( 'selector' === method.val() ) {
+            $( '.xpatch_method' ).hide();
+            $( '.selector_method' ).show();
+        }
+
+        method.change(function() {
+            if ( 'xpatch' === $( this ).val() ) {
+                $( '.xpatch_method' ).show();
+                $( '.selector_method' ).hide();
+            } else {
+                $( '.xpatch_method' ).hide();
+                $( '.selector_method' ).show();
+            }
+        });
+
     } );
-
 } )( jQuery );
