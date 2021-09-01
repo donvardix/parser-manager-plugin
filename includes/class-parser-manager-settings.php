@@ -3,7 +3,7 @@
 
 class Parser_Manager_Settings {
 
-	public function settings_page() {
+    public function settings_page() {
         if ( isset( $_POST['submit'] ) ) {
             echo 'submit';
         }
@@ -11,8 +11,8 @@ class Parser_Manager_Settings {
         require_once __DIR__ . '/views/html-settings-page.php';
     }
 
-	public function parsers_test_page() {
-		require_once __DIR__ . '/views/html-parsers-test-page.php';
-	}
+    public function parsers_test_page() {
+        require_once __DIR__ . '/views/html-parsers-test-page.php';
+    }
 
 }

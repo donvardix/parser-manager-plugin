@@ -3,14 +3,14 @@
 
 class Ajax_Scripts {
 
-	public function run() {
+    public function run() {
 
-		add_action( 'wp_ajax_prsrmngr_xpatch_test', array( $this, 'xpatch_test' ) );
+        add_action( 'wp_ajax_prsrmngr_xpatch_test', array( $this, 'xpatch_test' ) );
 
-	}
+    }
 
-	public function xpatch_test() {
-		return 'test';
-	}
+    public function xpatch_test() {
+        return 'test';
+    }
 
 }

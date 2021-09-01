@@ -9,16 +9,16 @@ abstract class Parser {
 
     protected $url;
 
-	public function set_url( $url ) {
-		$this->url = $url;
-	}
+    public function set_url( $url ) {
+        $this->url = $url;
+    }
 
     protected function get_html(): string {
         if ( $this->wp_method && function_exists( 'wp_remote_get' ) ) {
             return $this->wp_method();
         }
 
-	    return $this->curl_method();
+        return $this->curl_method();
     }
 
     private function wp_method(): string {
