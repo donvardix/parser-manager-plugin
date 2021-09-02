@@ -62,8 +62,7 @@ class Parser_Manager_Loader {
     public function enqueue_scripts() {
         wp_enqueue_style(
             'settings-style',
-            plugins_url( 'assets/css/style.css',
-                dirname( __FILE__ ) )
+            plugins_url( 'assets/css/style.min.css', dirname( __FILE__ ) )
         );
         wp_enqueue_script(
             'settings-script',

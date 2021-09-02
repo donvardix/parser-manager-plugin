@@ -51,9 +51,9 @@ class Parser_Manager_Meta_Boxes {
         require_once __DIR__ . '/views/html-meta-box-param.php';
     }
 
-	public function save( $post_id ) {
-		if ( ! wp_verify_nonce( $_POST['prsrmngr_nonce'], 'meta_box_param' ) )
-			return;
+    public function save( $post_id ) {
+        if ( ! isset( $_POST['prsrmngr_nonce'] ) || ! wp_verify_nonce( $_POST['prsrmngr_nonce'], 'meta_box_param' ) )
+            return;
 
         $params = self::PARAMS;
         foreach ( $params as $param ) {
