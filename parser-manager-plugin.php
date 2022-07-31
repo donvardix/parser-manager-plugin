@@ -5,7 +5,7 @@ Description: Parser Manager
 Author: donvardix
 Text Domain: parser-manager-plugin
 Domain Path: /languages
-Version: 0.0.0
+Version: 0.0.1
 Author URI: https://github.com/donvardix
 License: GPLv2 or later
 */

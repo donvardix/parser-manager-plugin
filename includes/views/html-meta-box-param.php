@@ -1,4 +1,4 @@
-<?php extract( $values ); ?>
+<?php extract( $data ); ?>
 <table class="form-table">
     <tr>
         <th><label for="prsrmngr_link"><?php _e( 'Link', 'parser-manager-plugin' ); ?></label></th>
@@ -31,6 +31,12 @@
         <th><label for="prsrmngr_end"><?php _e( 'End Selector', 'parser-manager-plugin' ); ?></label></th>
         <td>
             <input id="prsrmngr_end" name="prsrmngr_end" type="text" value="<?php echo $prsrmngr_end; ?>" />
+        </td>
+    </tr>
+    <tr class="steam_api">
+        <th><label for="prsrmngr_end"><?php _e( 'Steam API', 'parser-manager-plugin' ); ?></label></th>
+        <td>
+            <input id="prsrmngr_end" name="steam_api" type="text" value="<?php echo $steam_api; ?>" />
         </td>
     </tr>
 </table>

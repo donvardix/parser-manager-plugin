@@ -31,4 +31,13 @@ class Parser_Model {
         );
     }
 
+	public function set_parser_data( $parser_id, $value ): void {
+		$this->wpdb->insert( $this->wpdb_parser_data,
+			[
+				'parser_id' => $parser_id,
+				'value' => $value
+			]
+		);
+	}
+
 }

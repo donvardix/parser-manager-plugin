@@ -1,3 +1,4 @@
 <?php
+extract( $data );
 
-echo 'data';
+echo $steam_api . ' - ' . $lowest_price;

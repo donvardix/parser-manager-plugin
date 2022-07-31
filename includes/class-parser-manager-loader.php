@@ -84,7 +84,7 @@ class Parser_Manager_Loader {
     private function db_create() {
         global $wpdb;
 
-        $sql = "CREATE TABLE IF NOT EXISTS `" . $wpdb->prefix . "parser_data` (
+        $sql = "CREATE TABLE IF NOT EXISTS `" . $wpdb->prefix . "prsrmngr_parser_data` (
 			id bigint NOT NULL AUTO_INCREMENT,
 			value text NOT NULL,
             parser_id bigint NOT NULL,
