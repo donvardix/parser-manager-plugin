@@ -2,7 +2,6 @@
 
 use Symfony\Component\DomCrawler\Crawler;
 
-
 class Crawler_Parser extends Parser {
 
     public function start( $xpath ): string {

@@ -1,11 +1,12 @@
 <?php
 
+defined( 'ABSPATH' ) || exit;
 
 class Ajax_Scripts {
 
     public function run() {
 
-        add_action( 'wp_ajax_prsrmngr_xpatch_test', array( $this, 'xpatch_test' ) );
+        add_action( 'wp_ajax_prsrmngr_xpatch_test', [ $this, 'xpatch_test' ] );
 
     }
 

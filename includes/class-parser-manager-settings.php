@@ -1,5 +1,6 @@
 <?php
 
+defined( 'ABSPATH' ) || exit;
 
 class Parser_Manager_Settings {
 

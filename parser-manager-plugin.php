@@ -5,12 +5,12 @@ Description: Parser Manager
 Author: donvardix
 Text Domain: parser-manager-plugin
 Domain Path: /languages
-Version: 0.0.1
+Version: 0.0.2
 Author URI: https://github.com/donvardix
 License: GPLv2 or later
 */
 
-/*  © Copyright 2021
+/*  © Copyright 2022
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as
@@ -26,7 +26,10 @@ License: GPLv2 or later
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-if( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;
+
+define( 'PM_PLUGIN_FILE', __FILE__ );
+define( 'PM_VERSION', '0.0.2' );
 
 require_once __DIR__ . '/vendor/autoload.php';
 

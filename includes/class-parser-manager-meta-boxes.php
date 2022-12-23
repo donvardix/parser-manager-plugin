@@ -1,6 +1,6 @@
 <?php
 
-
+defined( 'ABSPATH' ) || exit;
 class Parser_Manager_Meta_Boxes {
 
     private const PARAMS = [
@@ -13,15 +13,15 @@ class Parser_Manager_Meta_Boxes {
     ];
 
     public function __construct() {
-        add_action( 'add_meta_boxes', array( $this, 'meta_boxes' ) );
-        add_action( 'save_post_parser', array( $this, 'save' ) );
+        add_action( 'add_meta_boxes', [ $this, 'meta_boxes' ] );
+        add_action( 'save_post_parser', [ $this, 'save' ] );
     }
 
     public function meta_boxes() {
         add_meta_box(
             'parser_data',
             'Parser Data',
-            array( $this, 'data_box' ),
+            [ $this, 'data_box' ],
             'parser',
             'normal',
             'high'
@@ -29,7 +29,7 @@ class Parser_Manager_Meta_Boxes {
         add_meta_box(
             'parser_param',
             'Parser Parameters',
-            array( $this, 'param_box' ),
+            [ $this, 'param_box' ],
             'parser',
             'normal',
             'high'

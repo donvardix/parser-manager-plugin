@@ -1,5 +1,6 @@
 <?php
 
+defined( 'ABSPATH' ) || exit;
 
 class Parser_Model {
 	private $wpdb;
@@ -27,7 +28,7 @@ class Parser_Model {
     function set_parser( $fields ) {
         $this->wpdb->insert( $this->wpdb_parser,
             $fields,
-            array( '%s', '%s', '%s', '%s' )
+            [ '%s', '%s', '%s', '%s' ]
         );
     }
 

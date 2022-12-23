@@ -22,7 +22,7 @@ abstract class Parser {
     }
 
     private function wp_method(): string {
-        $response = wp_remote_get( $this->url, array( 'sslverify' => $this->sslverify ) );
+        $response = wp_remote_get( $this->url, [ 'sslverify' => $this->sslverify ] );
 
         return $response['body'];
     }
