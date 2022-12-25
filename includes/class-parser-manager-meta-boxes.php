@@ -62,7 +62,7 @@ class Parser_Manager_Meta_Boxes {
             return;
 
         foreach ( self::PARAMS as $param ) {
-            update_post_meta( $post_id, '_' . $param, $_POST[ $param ] );
+            update_post_meta( $post_id, '_' . $param, htmlspecialchars( $_POST[ $param ] ) );
         }
     }
 

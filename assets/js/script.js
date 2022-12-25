@@ -18,5 +18,17 @@
             }
         });
 
+        $( '#test_request_parser' ).on('click', function() {
+            $.post( ajaxurl,
+                {
+                    action: 'test_request_parser',
+                    post_id: $( '#post_ID' ).val()
+                },
+                response => {
+                    console.log(response)
+                }
+            )
+        })
+
     } );
 } )( jQuery );

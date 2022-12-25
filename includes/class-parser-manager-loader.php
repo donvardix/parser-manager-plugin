@@ -19,6 +19,9 @@ class Parser_Manager_Loader {
             add_action( 'admin_menu', [ $this, 'admin_menu' ] );
 
             add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
+
+            // ajax
+            add_action( 'wp_ajax_test_request_parser', [ $this, 'test_request_parser' ] );
         }
     }
 
@@ -71,6 +74,21 @@ class Parser_Manager_Loader {
 
         wp_enqueue_style( 'parser-manager', plugins_url( "assets/css/style{$suffix}.css", PM_PLUGIN_FILE ), '', PM_VERSION );
         wp_enqueue_script( 'parser-manager', plugins_url( "assets/js/script{$suffix}.js", PM_PLUGIN_FILE ), [ 'jquery' ], PM_VERSION, true );
+    }
+
+    public function test_request_parser() {
+        $url = get_post_meta( $_POST['post_id'], '_prsrmngr_link', true );
+        $substr_start = htmlspecialchars_decode( get_post_meta( $_POST['post_id'], '_prsrmngr_start', true ) );
+        $substr_end = htmlspecialchars_decode( get_post_meta( $_POST['post_id'], '_prsrmngr_end', true ) );
+
+        $substr = new Substr_Parser;
+        $substr->set_url( $url );
+        $substr_result = $substr->start( $substr_start, $substr_end );
+
+        wp_send_json_success( [
+            'input' => [$url, $substr_start, $substr_end],
+            'output' => $substr_result
+        ] );
     }
 
     public function activation() {
