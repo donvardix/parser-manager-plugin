@@ -4,14 +4,16 @@ defined( 'ABSPATH' ) || exit;
 
 class Parser_Manager_Loader {
 
-    private $utils;
-
     function __construct() {
-        $this->utils = new Parser_Manager_Utils();
+        add_filter( 'cron_schedules', [ $this, 'cron_schedules' ] );
     }
 
     public function run() {
         add_action( 'init', [ $this, 'plugin_init' ] );
+
+        // wp cron
+        add_action( 'parser_manager_add_to_queue', [ $this, 'add_to_queue' ] );
+        add_action( 'parser_manager_queue_start', [ $this, 'queue_start' ] );
 
         if ( is_admin() ) {
             new Parser_Manager_Meta_Boxes;
@@ -77,17 +79,20 @@ class Parser_Manager_Loader {
     }
 
     public function test_request_parser() {
-        $url = get_post_meta( $_POST['post_id'], '_prsrmngr_link', true );
-        $substr_start = htmlspecialchars_decode( get_post_meta( $_POST['post_id'], '_prsrmngr_start', true ) );
-        $substr_end = htmlspecialchars_decode( get_post_meta( $_POST['post_id'], '_prsrmngr_end', true ) );
+//        $url = get_post_meta( $_POST['post_id'], '_prsrmngr_link', true );
+//        $substr_start = htmlspecialchars_decode( get_post_meta( $_POST['post_id'], '_prsrmngr_start', true ) );
+//        $substr_end = htmlspecialchars_decode( get_post_meta( $_POST['post_id'], '_prsrmngr_end', true ) );
+//
+//        $substr = new Substr_Parser;
+//        $substr->set_url( $url );
+//        $result = $substr->start( $substr_start, $substr_end );
 
-        $substr = new Substr_Parser;
-        $substr->set_url( $url );
-        $substr_result = $substr->start( $substr_start, $substr_end );
+        $steam_parser = new Steam_Parser();
+
+        $res = $steam_parser->sell_listings( $_POST['steam_name_item'] );
 
         wp_send_json_success( [
-            'input' => [$url, $substr_start, $substr_end],
-            'output' => $substr_result
+            'result' => $res
         ] );
     }
 
@@ -97,7 +102,31 @@ class Parser_Manager_Loader {
 //        register_uninstall_hook( __FILE__, [ $this, 'delete_options' ] );
     }
 
-    private function settings() {}
+    public function cron_schedules( $schedules ) {
+        $schedules['five_minutes'] = [
+            'interval' => 300,
+            'display' => 'Every 5 Minutes'
+        ];
+
+        return $schedules;
+    }
+
+    private function settings() {
+        // wp cron
+        if( ! wp_next_scheduled( 'parser_manager_add_to_queue' ) ) {
+            wp_schedule_event( time(), 'hourly', 'parser_manager_add_to_queue' );
+        }
+        if( ! wp_next_scheduled( 'parser_manager_queue_start' ) ) {
+            wp_schedule_event( time(), 'five_minutes', 'parser_manager_queue_start' );
+        }
+    }
+
+    public function add_to_queue() {
+        PM_Utils::log( 'test parser_manager_queue' );
+    }
+    public function queue_start() {
+        PM_Utils::log( 'test queue_start' );
+    }
 
     private function db_create() {
         global $wpdb;
@@ -113,7 +142,6 @@ class Parser_Manager_Loader {
     }
 
     public function delete_options() {
-        $this->utils->log( 'plugin_uninstall_hook' );
 //		global $wpdb;
 //
 //        delete_option( 'wp_simyz_chat_username' );

@@ -34,9 +34,9 @@
         </td>
     </tr>
     <tr class="steam_api">
-        <th><label for="prsrmngr_end"><?php _e( 'Steam API', 'parser-manager-plugin' ); ?></label></th>
+        <th><label for="prsrmngr_steam_name_item"><?php _e( 'Steam API Name Item', 'parser-manager-plugin' ); ?></label></th>
         <td>
-            <input id="prsrmngr_end" name="steam_api" type="text" value="<?php echo $steam_api; ?>" />
+            <input id="prsrmngr_steam_name_item" name="steam_api" type="text" value="<?php echo $steam_api; ?>" />
         </td>
     </tr>
 </table>
