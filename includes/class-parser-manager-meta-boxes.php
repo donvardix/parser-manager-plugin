@@ -4,12 +4,11 @@ defined( 'ABSPATH' ) || exit;
 class Parser_Manager_Meta_Boxes {
 
     private const PARAMS = [
-        'prsrmngr_link',
-        'prsrmngr_method',
-        'prsrmngr_xpatch',
-        'prsrmngr_start',
-        'prsrmngr_end',
-	    'steam_api'
+        'parser_link',
+        'parser_method',
+        'parser_xpatch',
+        'parser_start',
+        'parser_end'
     ];
 
     public function __construct() {
@@ -37,32 +36,26 @@ class Parser_Manager_Meta_Boxes {
     }
 
     public function data_box( $post ) {
-		$market_hash_name = get_post_meta( $post->ID, '_steam_api', true );
-
-	    $data = [
-			'steam_api' => $market_hash_name
-	    ];
-
         require_once __DIR__ . '/views/html-meta-box-data.php';
     }
 
     public function param_box( $post ) {
-        wp_nonce_field( 'meta_box_param', 'prsrmngr_nonce' );
+        wp_nonce_field( 'meta_box_param', 'parser_nonce' );
 
         $data = [];
         foreach ( self::PARAMS as $param ) {
-	        $data[ $param ] = get_post_meta( $post->ID, '_' . $param, true );
+	        $data[ $param ] = get_post_meta( $post->ID, $param, true );
         }
 
         require_once __DIR__ . '/views/html-meta-box-param.php';
     }
 
     public function save( $post_id ) {
-        if ( ! isset( $_POST['prsrmngr_nonce'] ) || ! wp_verify_nonce( $_POST['prsrmngr_nonce'], 'meta_box_param' ) )
+        if ( ! isset( $_POST['parser_nonce'] ) || ! wp_verify_nonce( $_POST['parser_nonce'], 'meta_box_param' ) )
             return;
 
         foreach ( self::PARAMS as $param ) {
-            update_post_meta( $post_id, '_' . $param, htmlspecialchars( $_POST[ $param ] ) );
+            update_post_meta( $post_id, $param, htmlspecialchars( $_POST[ $param ] ) );
         }
     }
 

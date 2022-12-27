@@ -2,7 +2,7 @@
     $( document ).ready( function() {
 
         // Plugin Settings
-        let method = $( '#prsrmngr_method' )
+        let method = $( '#parser_method' )
 
         if ( 'selector' === method.val() ) {
             $( '.xpatch_method' ).hide();
@@ -27,10 +27,14 @@
                 {
                     action: 'test_request_parser',
                     post_id: $( '#post_ID' ).val(),
-                    steam_name_item: $( '#prsrmngr_steam_name_item' ).val()
+                    parser_link: $( '#parser_link' ).val()
                 },
                 response => {
-                    $( '#result_value' ).text( response.data.result )
+                    if ( true === response.success ) {
+                        $( '#result_value' ).text( response.data.result )
+                    } else {
+                        $( '#result_value' ).text( 'Error: ' + response.data )
+                    }
                 }
             )
         })

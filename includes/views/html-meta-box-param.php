@@ -1,42 +1,36 @@
 <?php extract( $data ); ?>
 <table class="form-table">
     <tr>
-        <th><label for="prsrmngr_link"><?php _e( 'Link', 'parser-manager-plugin' ); ?></label></th>
+        <th><label for="parser_link"><?php _e( 'Link', 'parser-manager-plugin' ); ?></label></th>
         <td>
-            <input id="prsrmngr_link" name="prsrmngr_link" type="text" value="<?php echo $prsrmngr_link; ?>" />
+            <input id="parser_link" name="parser_link" type="text" value="<?php echo $parser_link; ?>" />
         </td>
     </tr>
     <tr>
-        <th><label for="prsrmngr_method"><?php _e( 'Method', 'parser-manager-plugin' ); ?></label></th>
+        <th><label for="parser_method"><?php _e( 'Method', 'parser-manager-plugin' ); ?></label></th>
         <td>
-            <select name="prsrmngr_method" id="prsrmngr_method">
-                <option value="xpatch"<?php selected( 'xpatch', $prsrmngr_method ); ?>>XPatch</option>
-                <option value="selector"<?php selected( 'selector', $prsrmngr_method ); ?>>Start/End Selector</option>
+            <select name="parser_method" id="parser_method">
+                <option value="xpatch"<?php selected( 'xpatch', $parser_method ); ?>>XPatch</option>
+                <option value="selector"<?php selected( 'selector', $parser_method ); ?>>Start/End Selector</option>
             </select>
         </td>
     </tr>
     <tr class="xpatch_method">
-        <th><label for="prsrmngr_xpatch"><?php _e( 'XPatch', 'parser-manager-plugin' ); ?></label></th>
+        <th><label for="parser_xpatch"><?php _e( 'XPatch', 'parser-manager-plugin' ); ?></label></th>
         <td>
-            <input id="prsrmngr_xpatch" name="prsrmngr_xpatch" type="text" value="<?php echo $prsrmngr_xpatch; ?>" />
+            <input id="parser_xpatch" name="parser_xpatch" type="text" value="<?php echo $parser_xpatch; ?>" />
         </td>
     </tr>
     <tr class="selector_method">
-        <th><label for="prsrmngr_start"><?php _e( 'Start Selector', 'parser-manager-plugin' ); ?></label></th>
+        <th><label for="parser_start"><?php _e( 'Start Selector', 'parser-manager-plugin' ); ?></label></th>
         <td>
-            <input id="prsrmngr_start" name="prsrmngr_start" type="text" value="<?php echo $prsrmngr_start; ?>" />
+            <input id="parser_start" name="parser_start" type="text" value="<?php echo $parser_start; ?>" />
         </td>
     </tr>
     <tr class="selector_method">
-        <th><label for="prsrmngr_end"><?php _e( 'End Selector', 'parser-manager-plugin' ); ?></label></th>
+        <th><label for="parser_end"><?php _e( 'End Selector', 'parser-manager-plugin' ); ?></label></th>
         <td>
-            <input id="prsrmngr_end" name="prsrmngr_end" type="text" value="<?php echo $prsrmngr_end; ?>" />
-        </td>
-    </tr>
-    <tr class="steam_api">
-        <th><label for="prsrmngr_steam_name_item"><?php _e( 'Steam API Name Item', 'parser-manager-plugin' ); ?></label></th>
-        <td>
-            <input id="prsrmngr_steam_name_item" name="steam_api" type="text" value="<?php echo $steam_api; ?>" />
+            <input id="parser_end" name="parser_end" type="text" value="<?php echo $parser_end; ?>" />
         </td>
     </tr>
 </table>

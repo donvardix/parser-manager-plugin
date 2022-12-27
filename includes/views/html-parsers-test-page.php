@@ -2,12 +2,17 @@
 
 
 $item_name = 'Gamma 2 Case';
+$url = 'https://steamcommunity.com/market/listings/440/Mann%20Co.%20Supply%20Crate%20Key';
 
-$steam_parser = new Steam_Parser();
-
-$res = $steam_parser->sell_listings( $item_name );
+//$steam_parser = new Steam_Parser();
+//
+//$params = $steam_parser->parse_url( $url );
+//$res = $steam_parser->sell_listings( $params['item_name'], $params['app_id'] );
 //die( var_dump( $res ) );
 
+$steam_parser = new Parser_Manager_Loader();
+$steam_parser->add_to_queue();
+$steam_parser->queue_start();
 
 
 //use SteamApi\SteamApi;

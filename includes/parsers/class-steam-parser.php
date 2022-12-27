@@ -4,16 +4,36 @@ defined( 'ABSPATH' ) || exit;
 
 class Steam_Parser extends Parser {
 
-    public function sell_listings( $item_name, $app_id = 730 ) {
-        $params = [
-            'query' => $item_name,
-            'appid' => $app_id,
-            'start' => 0,
-            'count' => 1,
-            'norender' => 1
-        ];
+    public function parse_url( $url ) {
+        $path = parse_url( $url, PHP_URL_PATH );
 
-        $url = 'https://steamcommunity.com/market/search/render?' . http_build_query( $params, '', null, PHP_QUERY_RFC3986 );
+        if ( empty( $path ) ) {
+            return false;
+        }
+
+        $params = array_reverse( explode( '/', $path ) );
+
+        $item_name = ! empty( $params[0] ) ? $params[0] : false;
+        $app_id = ! empty( $params[1] ) ? absint( $params[1] ) : false;
+
+        if ( ! $item_name || !$app_id ) {
+            return false;
+        }
+
+        return [
+            'item_name' => $item_name,
+            'app_id' => $app_id
+        ];
+    }
+
+    public function sell_listings( $item_name, $app_id = 730, $start = 0, $count = 100 ) {
+
+        $url = sprintf( 'https://steamcommunity.com/market/search/render?query=%s&appid=%s&start=%s&count=%s&norender=1',
+            $item_name,
+            $app_id,
+            $start,
+            $count
+        );
 
         $this->set_url( $url );
 
@@ -25,7 +45,7 @@ class Steam_Parser extends Parser {
         }
 
         foreach ( $response['results'] as $result ) {
-            if ( $item_name == $result['name'] ) {
+            if ( $response['searchdata']['query'] == $result['name'] ) {
                 PM_Utils::log( 'sell_listings() | search success' );
                 return $result['sell_listings'];
             }
@@ -33,14 +53,6 @@ class Steam_Parser extends Parser {
 
         PM_Utils::log( 'sell_listings() | no search matches found' );
         return false;
-    }
-
-    public function run( $start, $end ): string {
-        $html = $this->get_html();
-
-        $delete_before = substr( $html, strpos( $html, $start ) + strlen( $start ) );
-
-        return substr( $delete_before, 0, strpos( $delete_before, $end ) );
     }
 
 }

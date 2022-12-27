@@ -79,20 +79,22 @@ class Parser_Manager_Loader {
     }
 
     public function test_request_parser() {
-//        $url = get_post_meta( $_POST['post_id'], '_prsrmngr_link', true );
-//        $substr_start = htmlspecialchars_decode( get_post_meta( $_POST['post_id'], '_prsrmngr_start', true ) );
-//        $substr_end = htmlspecialchars_decode( get_post_meta( $_POST['post_id'], '_prsrmngr_end', true ) );
-//
-//        $substr = new Substr_Parser;
-//        $substr->set_url( $url );
-//        $result = $substr->start( $substr_start, $substr_end );
-
         $steam_parser = new Steam_Parser();
 
-        $res = $steam_parser->sell_listings( $_POST['steam_name_item'] );
+        $params = $steam_parser->parse_url( esc_url( $_POST['parser_link'] ) );
+
+        if ( ! $params ) {
+            wp_send_json_error( 'params error' );
+        }
+
+        $result = $steam_parser->sell_listings( $params['item_name'], $params['app_id'] );
+
+        if ( ! $result ) {
+            wp_send_json_error( 'result error' );
+        }
 
         wp_send_json_success( [
-            'result' => $res
+            'result' => $result
         ] );
     }
 
@@ -123,15 +125,81 @@ class Parser_Manager_Loader {
 
     public function add_to_queue() {
         PM_Utils::log( 'test parser_manager_queue' );
+        $unix = time();
+//        $passed = $unix - 86400; // day
+        $passed = $unix - 20;
+
+        $args = [
+            'post_type' => 'parser',
+            'meta_query' => [
+                [
+                    'relation' => 'OR',
+                    [
+                        'key' => 'parser_queue_added',
+                        'compare_key' => 'NOT EXISTS'
+                    ],
+                    [
+                        'key' => 'parser_queue_added',
+                        'value' => 1,
+                        'compare' => '!='
+                    ]
+                ],
+                [
+                    'relation' => 'OR',
+                    [
+                        'key' => 'parser_last_run',
+                        'compare_key' => 'NOT EXISTS'
+                    ],
+                    [
+                        'key' => 'parser_last_run',
+                        'value' => $passed,
+                        'compare' => '<'
+                    ]
+                ]
+            ]
+        ];
+
+        $parsers = get_posts( $args );
+
+        if ( $parsers ) {
+            foreach ( $parsers as $parser ) {
+                update_post_meta( $parser->ID, 'parser_queue_added', 1 );
+            }
+        }
     }
     public function queue_start() {
         PM_Utils::log( 'test queue_start' );
+
+        $args = [
+            'post_type' => 'parser',
+            'meta_query' => [
+                [
+                    'key' => 'parser_queue_added',
+                    'value' => 1
+                ]
+            ]
+        ];
+
+        $parsers = get_posts( $args );
+
+        if ( $parsers ) {
+            foreach ( $parsers as $parser ) {
+                $unix = time();
+                update_post_meta( $parser->ID, 'parser_queue_added', 0 );
+                update_post_meta( $parser->ID, 'parser_last_run', $unix );
+
+                $value = '111';
+
+                $model = new Parser_Model;
+                $model->set_parser_data( $parser->ID, $value );
+            }
+        }
     }
 
     private function db_create() {
         global $wpdb;
 
-        $sql = "CREATE TABLE IF NOT EXISTS `" . $wpdb->prefix . "prsrmngr_parser_data` (
+        $sql = "CREATE TABLE IF NOT EXISTS `" . $wpdb->prefix . "pmp_parser_data` (
 			id bigint NOT NULL AUTO_INCREMENT,
 			value text NOT NULL,
             parser_id bigint NOT NULL,
