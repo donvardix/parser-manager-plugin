@@ -36,6 +36,9 @@ class Parser_Manager_Meta_Boxes {
     }
 
     public function data_box( $post ) {
+        $data = [
+            'post_id' => $post->ID
+        ];
         require_once __DIR__ . '/views/html-meta-box-data.php';
     }
 

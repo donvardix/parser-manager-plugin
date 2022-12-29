@@ -14,6 +14,9 @@ $steam_parser = new Parser_Manager_Loader();
 $steam_parser->add_to_queue();
 $steam_parser->queue_start();
 
+//$model = new Parser_Model;
+//die( '<pre>' . print_r( $model->get_parser_data(), true ) . '</pre>' );
+
 
 //use SteamApi\SteamApi;
 //

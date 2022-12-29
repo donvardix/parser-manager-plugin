@@ -3,6 +3,8 @@
 defined( 'ABSPATH' ) || exit;
 
 class Steam_Parser extends Parser {
+    private $item_name = '';
+    private $app_id = 0;
 
     public function parse_url( $url ) {
         $path = parse_url( $url, PHP_URL_PATH );
@@ -16,14 +18,14 @@ class Steam_Parser extends Parser {
         $item_name = ! empty( $params[0] ) ? $params[0] : false;
         $app_id = ! empty( $params[1] ) ? absint( $params[1] ) : false;
 
-        if ( ! $item_name || !$app_id ) {
+        if ( ! $item_name || ! $app_id ) {
             return false;
         }
 
-        return [
-            'item_name' => $item_name,
-            'app_id' => $app_id
-        ];
+        $this->item_name = $item_name;
+        $this->app_id = $app_id;
+
+        return true;
     }
 
     public function sell_listings( $item_name, $app_id = 730, $start = 0, $count = 100 ) {
@@ -52,6 +54,18 @@ class Steam_Parser extends Parser {
         }
 
         PM_Utils::log( 'sell_listings() | no search matches found' );
+        return false;
+    }
+
+    public function run( $method ) {
+        switch ( $method ) {
+            case 'sell_listings':
+                return $this->sell_listings( $this->item_name, $this->app_id );
+            case 'sell_listings2':
+                return 'test2';
+        }
+
+        PM_Utils::log( 'Steam_Parser->run() | method not found' );
         return false;
     }
 
