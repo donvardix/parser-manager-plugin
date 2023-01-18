@@ -1,22 +1,22 @@
 jQuery( document ).ready( function( $ ) {
 
-    // Plugin Settings
+    // Parser Settings
     let method = $( '#parser_method' )
 
-    if ( 'selector' === method.val() ) {
-        $( '.xpatch_method' ).hide();
-        $( '.selector_method' ).show();
-    }
+    initParserMethod()
+    method.change( initParserMethod )
 
-    method.change(function() {
-        if ( 'xpatch' === $( this ).val() ) {
-            $( '.xpatch_method' ).show();
-            $( '.selector_method' ).hide();
-        } else {
-            $( '.xpatch_method' ).hide();
-            $( '.selector_method' ).show();
+    function initParserMethod() {
+        $( '.methods' ).hide();
+
+        switch ( method.val() ) {
+            case 'xpatch':
+                $( '.xpatch' ).show()
+                break;
+            case 'selector':
+                $( '.selector' ).show()
         }
-    });
+    }
 
 
 
@@ -29,6 +29,7 @@ jQuery( document ).ready( function( $ ) {
                 parser_link: $( '#parser_link' ).val()
             },
             response => {
+                $( '.result_parser' ).show()
                 if ( true === response.success ) {
                     $( '#result_value' ).text( response.data.result )
                 } else {
@@ -37,44 +38,4 @@ jQuery( document ).ready( function( $ ) {
             }
         )
     })
-
-    // Highcharts
-    Highcharts.stockChart('container', {
-        rangeSelector: {
-            selected: 1
-        },
-        title: {
-            text: 'AAPL Stock Price1'
-        },
-        series: [
-            {
-                name: 'AAPL Stock Price3',
-                data: [
-                    {
-                        x: 1610548200000,
-                        y: 130.89,
-                        price: 25
-                    },
-                    {
-                        x: 1610634600000,
-                        y: 128.91,
-                        price: 26
-                    },
-                    {
-                        x: 1610734600000,
-                        y: 129.91,
-                        price: 27
-                    }
-                ],
-                step: true,
-                tooltip: {
-                    valueDecimals: 2,
-                    pointFormatter: function() {
-                        return 'Count: <b>' + this.y + '</b>, <br> Price '+ this.price;
-                    }
-                }
-            }
-        ]
-    });
-
 } );

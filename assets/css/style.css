@@ -1,14 +1,17 @@
-#parser_param .selector_method {
+#parser_settings .selector_method {
     display: none;
 }
-#parser_param input {
+#parser_settings input {
     width: 100%;
 }
-#parser_param .test_parser {
+#parser_settings .test_parser {
     display: flex;
     align-items: center;
 }
-#parser_param .test_parser .result_parser {
+#parser_settings .test_parser .result_parser {
     margin-left: 15px;
     display: none;
+}
+#parser-chart-container {
+    width: 100%;
 }

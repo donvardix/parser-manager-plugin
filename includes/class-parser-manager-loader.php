@@ -76,6 +76,12 @@ class Parser_Manager_Loader {
 
         wp_enqueue_style( 'parser-manager', plugins_url( "assets/css/style{$suffix}.css", PM_PLUGIN_FILE ), '', PM_VERSION );
         wp_enqueue_script( 'parser-manager', plugins_url( "assets/js/script{$suffix}.js", PM_PLUGIN_FILE ), [ 'jquery' ], PM_VERSION, true );
+
+	    // Highcharts
+	    wp_enqueue_script( 'highstock', plugins_url( 'assets/js/highcharts/highstock.js', PM_PLUGIN_FILE ), [], '10.3.2' );
+	    wp_enqueue_script( 'highstock-exporting', plugins_url( 'assets/js/highcharts/exporting.js', PM_PLUGIN_FILE ), [], '10.3.2' );
+	    wp_enqueue_script( 'highstock-export-data', plugins_url( 'assets/js/highcharts/export-data.js', PM_PLUGIN_FILE ), [], '10.3.2' );
+	    wp_enqueue_script( 'highstock-accessibility', plugins_url( 'assets/js/highcharts/accessibility.js', PM_PLUGIN_FILE ), [], '10.3.2' );
     }
 
     public function test_request_parser() {

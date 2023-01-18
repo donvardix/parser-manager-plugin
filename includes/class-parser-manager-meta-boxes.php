@@ -18,45 +18,41 @@ class Parser_Manager_Meta_Boxes {
 
     public function meta_boxes() {
         add_meta_box(
-            'parser_data',
-            'Parser Data',
-            [ $this, 'data_box' ],
+            'parser_chart',
+            'Parser Chart',
+            [ $this, 'chart_box' ],
             'parser',
             'normal',
             'high'
         );
         add_meta_box(
-            'parser_param',
-            'Parser Parameters',
-            [ $this, 'param_box' ],
+            'parser_settings',
+            'Parser Settings',
+            [ $this, 'settings_box' ],
             'parser',
             'normal',
             'high'
         );
     }
 
-    public function data_box( $post ) {
+    public function chart_box( $post ) {
         $data = [
-            'post_id' => $post->ID
+            'post_id' => $post->ID,
+	        'title' => get_the_title( $post->ID )
         ];
-        require_once __DIR__ . '/views/html-meta-box-data.php';
+        require_once __DIR__ . '/views/html-meta-box-chart.php';
     }
 
-    public function param_box( $post ) {
-        wp_nonce_field( 'meta_box_param', 'parser_nonce' );
-
+    public function settings_box( $post ) {
         $data = [];
         foreach ( self::PARAMS as $param ) {
 	        $data[ $param ] = get_post_meta( $post->ID, $param, true );
         }
 
-        require_once __DIR__ . '/views/html-meta-box-param.php';
+        require_once __DIR__ . '/views/html-meta-box-settings.php';
     }
 
     public function save( $post_id ) {
-        if ( ! isset( $_POST['parser_nonce'] ) || ! wp_verify_nonce( $_POST['parser_nonce'], 'meta_box_param' ) )
-            return;
-
         foreach ( self::PARAMS as $param ) {
             update_post_meta( $post_id, $param, htmlspecialchars( $_POST[ $param ] ) );
         }
