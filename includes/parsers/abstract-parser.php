@@ -1,5 +1,6 @@
 <?php
 
+defined( 'ABSPATH' ) || exit;
 
 abstract class Parser {
 
@@ -37,4 +38,9 @@ abstract class Parser {
         return $html;
     }
 
+	public function get_highcharts_data( $post_id ) {
+		$model = new Parser_Model;
+		$parser_data = $model->get_parser_by_id( $post_id );
+		return json_encode( $parser_data, JSON_NUMERIC_CHECK );
+	}
 }

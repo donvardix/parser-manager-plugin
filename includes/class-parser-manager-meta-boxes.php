@@ -36,9 +36,22 @@ class Parser_Manager_Meta_Boxes {
     }
 
     public function chart_box( $post ) {
+		$parsers_names = [
+			'xpatch' => 'Crawler_Parser',
+			'selector' => 'Substr_Parser',
+			'steam' => 'Steam_Parser',
+		];
+
+		$parser_method = get_post_meta( $post->ID, 'parser_method', true );
+		if ( array_key_exists( $parser_method, $parsers_names ) ) {
+			$parser = new $parsers_names[$parser_method];
+			$highcharts_data = $parser->get_highcharts_data( $post->ID );
+		}
+
         $data = [
             'post_id' => $post->ID,
-	        'title' => get_the_title( $post->ID )
+	        'title' => get_the_title( $post->ID ),
+	        'highcharts_data' => $highcharts_data ?? []
         ];
         require_once __DIR__ . '/views/html-meta-box-chart.php';
     }

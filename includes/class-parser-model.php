@@ -20,7 +20,7 @@ class Parser_Model {
      */
     function get_parser_by_id( $id ) {
         return $this->wpdb->get_results( $this->wpdb->prepare(
-            "SELECT data, created FROM {$this->wpdb_parser_data} WHERE parser_id = %d ORDER BY id DESC LIMIT 10",
+            "SELECT CONCAT(UNIX_TIMESTAMP(created), '000') as x, data as y FROM {$this->wpdb_parser_data} WHERE parser_id = %d ORDER BY id DESC",
             absint( $id )
         ) );
     }
