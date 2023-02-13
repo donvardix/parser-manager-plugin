@@ -6,7 +6,7 @@ class Steam_Parser extends Parser {
     private $item_name = '';
     private $app_id = 0;
 
-    public function parse_url( $url ) {
+    public function parse_url( $url ): bool {
         $path = parse_url( $url, PHP_URL_PATH );
 
         if ( empty( $path ) ) {
@@ -49,7 +49,10 @@ class Steam_Parser extends Parser {
         foreach ( $response['results'] as $result ) {
             if ( $response['searchdata']['query'] == $result['name'] ) {
                 PM_Utils::log( 'sell_listings() | search success' );
-                return $result['sell_listings'];
+                return [
+					'y' => $result['sell_listings'],
+					'a1' => $result['sell_price_text'],
+                ];
             }
         }
 
@@ -63,10 +66,10 @@ class Steam_Parser extends Parser {
                 return $this->sell_listings( $this->item_name, $this->app_id );
             case 'sell_listings2':
                 return 'test2';
+	        default:
+		        PM_Utils::log( 'Steam_Parser->run() | method not found' );
+		        return false;
         }
-
-        PM_Utils::log( 'Steam_Parser->run() | method not found' );
-        return false;
     }
 
 }

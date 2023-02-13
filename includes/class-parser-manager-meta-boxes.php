@@ -45,13 +45,13 @@ class Parser_Manager_Meta_Boxes {
 		$parser_method = get_post_meta( $post->ID, 'parser_method', true );
 		if ( array_key_exists( $parser_method, $parsers_names ) ) {
 			$parser = new $parsers_names[$parser_method];
-			$highcharts_data = $parser->get_highcharts_data( $post->ID );
+			$highcharts_data = $parser->get_highcharts_data( $post->ID, true );
 		}
 
         $data = [
             'post_id' => $post->ID,
 	        'title' => get_the_title( $post->ID ),
-	        'highcharts_data' => $highcharts_data ?? []
+	        'highcharts_data' => $highcharts_data ?? '{}'
         ];
         require_once __DIR__ . '/views/html-meta-box-chart.php';
     }
@@ -66,9 +66,11 @@ class Parser_Manager_Meta_Boxes {
     }
 
     public function save( $post_id ) {
-        foreach ( self::PARAMS as $param ) {
-            update_post_meta( $post_id, $param, htmlspecialchars( $_POST[ $param ] ) );
-        }
+		if ( isset( $_POST['_wpnonce'] ) ) {
+			foreach ( self::PARAMS as $param ) {
+				update_post_meta( $post_id, $param, htmlspecialchars( $_POST[ $param ] ) );
+			}
+		}
     }
 
 }

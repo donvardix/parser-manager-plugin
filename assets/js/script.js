@@ -25,13 +25,14 @@ jQuery( document ).ready( function( $ ) {
         $.post( ajaxurl,
             {
                 action: 'test_request_parser',
+                parser_method: $( '#parser_method' ).val(),
                 post_id: $( '#post_ID' ).val(),
                 parser_link: $( '#parser_link' ).val()
             },
             response => {
                 $( '.result_parser' ).show()
                 if ( true === response.success ) {
-                    $( '#result_value' ).text( response.data.result )
+                    $( '#result_value' ).text( response.data.html )
                 } else {
                     $( '#result_value' ).text( 'Error: ' + response.data )
                 }

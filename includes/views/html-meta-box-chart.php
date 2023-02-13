@@ -11,7 +11,7 @@
         },
         series: [
             {
-                name: 'Data',
+                name: 'Amount',
                 data: <?= $data['highcharts_data'] ?>,
                 step: true,
                 tooltip: {
@@ -19,12 +19,12 @@
                     pointFormatter: function() {
                         let text = this.series.name + ': ' + this.y;
 
-                        if ( this.args1 ) {
-                            text += '<br />Price: ' + this.args1
+                        if ( this.a1 ) {
+                            text += '<br />Price: ' + this.a1
                         }
 
-                        if ( this.args2 ) {
-                            text += '<br />Price: ' + this.args2
+                        if ( this.a2 ) {
+                            text += '<br />Price: ' + this.a2
                         }
 
                         return text;

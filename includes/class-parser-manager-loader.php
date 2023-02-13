@@ -84,24 +84,46 @@ class Parser_Manager_Loader {
 	    wp_enqueue_script( 'highstock-accessibility', plugins_url( 'assets/js/highcharts/accessibility.js', PM_PLUGIN_FILE ), [], '10.3.2' );
     }
 
+	public function run_parser_by_id( $id ) {
+		$method = get_post_meta( $id, 'parser_method', true );
+		$link = get_post_meta( $id, 'parser_link', true );
+
+		switch ( $method ) {
+			case 'steam':
+				$steam_parser = new Steam_Parser;
+				$steam_parser->parse_url( $link );
+				return $steam_parser->run( 'sell_listings' );
+			default:
+				return false;
+		}
+	}
+
     public function test_request_parser() {
-        $steam_parser = new Steam_Parser();
+	    switch ( $_POST['parser_method'] ) {
+		    case 'steam':
+			    $steam_parser = new Steam_Parser;
+			    $check_link = $steam_parser->parse_url( esc_url( $_POST['parser_link'] ) );
 
-        $check_link = $steam_parser->parse_url( esc_url( $_POST['parser_link'] ) );
+			    if ( ! $check_link ) {
+				    wp_send_json_error( 'link error' );
+			    }
 
-        if ( ! $check_link ) {
-            wp_send_json_error( 'params error' );
-        }
+			    $data = $steam_parser->run( 'sell_listings' );
 
-        $result = $steam_parser->run( 'sell_listings' );
+			    if ( ! $data ) {
+				    wp_send_json_error( 'parser error' );
+			    }
 
-        if ( ! $result ) {
-            wp_send_json_error( 'result error' );
-        }
+			    $model = new Parser_Model;
+			    $model->add_parser_data( $_POST['post_id'], $data );
 
-        wp_send_json_success( [
-            'result' => $result
-        ] );
+			    wp_send_json_success( [
+				    'html' => "Quantity: {$data['y']}, Price: {$data['a1']}"
+			    ] );
+
+		    default:
+			    wp_send_json_error( 'method not found' );
+	    }
     }
 
     public function activation() {
@@ -185,28 +207,24 @@ class Parser_Manager_Loader {
 
         $parsers = get_posts( $args );
 
-        if ( $parsers ) {
-            $steam_parser = new Steam_Parser;
-
-            foreach ( $parsers as $parser ) {
-                $unix = time();
-                update_post_meta( $parser->ID, 'parser_queue_added', 0 );
-                update_post_meta( $parser->ID, 'parser_last_run', $unix );
-
-                $link = get_post_meta( $parser->ID, 'parser_link', true );
-
-                $steam_parser->parse_url( $link );
-                $data = $steam_parser->run( 'sell_listings' );
-
-                if ( ! $data ) {
-                    PM_Utils::log( 'queue_start() | empty data' );
-                    $data = 'empty data';
-                }
-
-                $model = new Parser_Model;
-                $model->add_parser_data( $parser->ID, $data );
-            }
+        if ( ! $parsers ) {
+            return;
         }
+
+	    foreach ( $parsers as $parser ) {
+		    update_post_meta( $parser->ID, 'parser_queue_added', 0 );
+		    update_post_meta( $parser->ID, 'parser_last_run', time() );
+
+			$data = $this->run_parser_by_id( $parser->ID );
+
+		    if ( ! $data ) {
+			    PM_Utils::log( 'queue_start() | empty data' );
+			    $data = 'empty data';
+		    }
+
+		    $model = new Parser_Model;
+		    $model->add_parser_data( $parser->ID, $data );
+	    }
     }
 
     private function db_create() {

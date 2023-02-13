@@ -29,13 +29,9 @@ class Parser_Model {
 		$this->wpdb->insert( $this->wpdb_parser_data,
 			[
 				'parser_id' => $parser_id,
-				'data' => $data
+				'data' => maybe_serialize( $data )
 			]
 		);
 	}
-
-    public function get_parser_data() {
-        return $this->wpdb->get_results( "SELECT UNIX_TIMESTAMP(created) as qwe FROM {$this->wpdb_parser_data}" );
-    }
 
 }
