@@ -8,7 +8,7 @@ class Parser_Manager_Loader {
         add_filter( 'cron_schedules', [ $this, 'cron_schedules' ] );
     }
 
-    public function run() {
+    public function init() {
         add_action( 'init', [ $this, 'plugin_init' ] );
 
         // wp cron
