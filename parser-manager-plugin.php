@@ -5,7 +5,7 @@ Description: Parser Manager
 Author: donvardix
 Text Domain: parser-manager-plugin
 Domain Path: /languages
-Version: 0.1.2
+Version: 0.1.3
 Author URI: https://github.com/donvardix
 License: GPLv2 or later
 */
@@ -29,7 +29,7 @@ License: GPLv2 or later
 defined( 'ABSPATH' ) || exit;
 
 define( 'PM_PLUGIN_FILE', __FILE__ );
-define( 'PM_VERSION', '0.1.2' );
+define( 'PM_VERSION', '0.1.3' );
 
 require_once __DIR__ . '/vendor/autoload.php';
 
