@@ -3,8 +3,8 @@
 defined( 'ABSPATH' ) || exit;
 
 class Parser_Model {
-	private $wpdb;
-	private $wpdb_parser_data;
+    private $wpdb;
+    private $wpdb_parser_data;
 
     public function __construct() {
         global $wpdb;
@@ -25,13 +25,13 @@ class Parser_Model {
         ) );
     }
 
-	public function add_parser_data( $parser_id, $data ): void {
-		$this->wpdb->insert( $this->wpdb_parser_data,
-			[
-				'parser_id' => $parser_id,
-				'data' => maybe_serialize( $data )
-			]
-		);
-	}
+    public function add_parser_data( $parser_id, $data ): void {
+        $this->wpdb->insert( $this->wpdb_parser_data,
+            [
+                'parser_id' => $parser_id,
+                'data'      => maybe_serialize( $data )
+            ]
+        );
+    }
 
 }

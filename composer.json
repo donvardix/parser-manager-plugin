@@ -1,8 +1,7 @@
 {
   "require": {
     "php": "^7.2|^8.0",
-    "symfony/dom-crawler": "^5.4",
-    "allyans3/steam-market-api-v2": "^4.2"
+    "symfony/dom-crawler": "^5.4"
   },
   "autoload": {
     "classmap": [

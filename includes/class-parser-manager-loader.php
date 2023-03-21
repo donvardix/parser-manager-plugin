@@ -19,7 +19,6 @@ class Parser_Manager_Loader {
             new Parser_Manager_Meta_Boxes;
 
             add_action( 'admin_menu', [ $this, 'admin_menu' ] );
-
             add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
 
             // ajax
@@ -72,58 +71,68 @@ class Parser_Manager_Loader {
     }
 
     public function admin_enqueue_scripts() {
-        $suffix  = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+        $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-        wp_enqueue_style( 'parser-manager', plugins_url( "assets/css/style{$suffix}.css", PM_PLUGIN_FILE ), '', PM_VERSION );
-        wp_enqueue_script( 'parser-manager', plugins_url( "assets/js/script{$suffix}.js", PM_PLUGIN_FILE ), [ 'jquery' ], PM_VERSION, true );
+        wp_enqueue_style( 'parser-manager', plugins_url( "assets/css/style{$suffix}.css", PMP_PLUGIN_FILE ), '', PMP_VERSION );
+        wp_enqueue_script( 'parser-manager', plugins_url( "assets/js/script{$suffix}.js", PMP_PLUGIN_FILE ), [ 'jquery' ], PMP_VERSION, true );
 
-	    // Highcharts
-	    wp_enqueue_script( 'highstock', plugins_url( 'assets/js/highcharts/highstock.js', PM_PLUGIN_FILE ), [], '10.3.2' );
-	    wp_enqueue_script( 'highstock-exporting', plugins_url( 'assets/js/highcharts/exporting.js', PM_PLUGIN_FILE ), [], '10.3.2' );
-	    wp_enqueue_script( 'highstock-export-data', plugins_url( 'assets/js/highcharts/export-data.js', PM_PLUGIN_FILE ), [], '10.3.2' );
-	    wp_enqueue_script( 'highstock-accessibility', plugins_url( 'assets/js/highcharts/accessibility.js', PM_PLUGIN_FILE ), [], '10.3.2' );
+        // Highcharts
+        wp_enqueue_script( 'highstock', plugins_url( 'assets/js/highcharts/highstock.js', PMP_PLUGIN_FILE ), [], '10.3.2' );
+        wp_enqueue_script( 'highstock-exporting', plugins_url( 'assets/js/highcharts/exporting.js', PMP_PLUGIN_FILE ), [], '10.3.2' );
+        wp_enqueue_script( 'highstock-export-data', plugins_url( 'assets/js/highcharts/export-data.js', PMP_PLUGIN_FILE ), [], '10.3.2' );
+        wp_enqueue_script( 'highstock-accessibility', plugins_url( 'assets/js/highcharts/accessibility.js', PMP_PLUGIN_FILE ), [], '10.3.2' );
     }
 
-	public function run_parser_by_id( $id ) {
-		$method = get_post_meta( $id, 'parser_method', true );
-		$link = get_post_meta( $id, 'parser_link', true );
+    public function run_parser_by_id( $id ) {
+        $method = get_post_meta( $id, 'parser_method', true );
+        $link   = get_post_meta( $id, 'parser_link', true );
 
-		switch ( $method ) {
-			case 'steam':
-				$steam_parser = new Steam_Parser;
-				$steam_parser->parse_url( $link );
-				return $steam_parser->run( 'sell_listings' );
-			default:
-				return false;
-		}
-	}
+        switch ( $method ) {
+            case 'steam':
+                $steam_parser = new Steam_Parser;
+                $steam_parser->parse_url( $link );
+
+                return $steam_parser->run( 'sell_listings' );
+            case 'selector':
+                $parser_start = get_post_meta( $id, 'parser_start', true );
+                $parser_end   = get_post_meta( $id, 'parser_end', true );
+
+                $selector_parser = new Substr_Parser( $link );
+
+                return $selector_parser->run( $parser_start, $parser_end );
+            default:
+                return false;
+        }
+    }
 
     public function test_request_parser() {
-	    switch ( $_POST['parser_method'] ) {
-		    case 'steam':
-			    $steam_parser = new Steam_Parser;
-			    $check_link = $steam_parser->parse_url( esc_url( $_POST['parser_link'] ) );
+        switch ( $_POST['parser_method'] ) {
+            case 'steam':
+                $steam_parser = new Steam_Parser;
+                $check_link   = $steam_parser->parse_url( esc_url( $_POST['parser_link'] ) );
 
-			    if ( ! $check_link ) {
-				    wp_send_json_error( 'link error' );
-			    }
+                if ( ! $check_link ) {
+                    wp_send_json_error( 'link error' );
+                }
 
-			    $data = $steam_parser->run( 'sell_listings' );
+                $data = $steam_parser->run( 'sell_listings' );
 
-			    if ( ! $data ) {
-				    wp_send_json_error( 'parser error' );
-			    }
+                if ( ! $data ) {
+                    wp_send_json_error( 'parser error' );
+                }
 
-			    $model = new Parser_Model;
-			    $model->add_parser_data( $_POST['post_id'], $data );
+                // todo move to add parser
 
-			    wp_send_json_success( [
-				    'html' => "Quantity: {$data['y']}, Price: {$data['a1']}"
-			    ] );
+//			    $model = new Parser_Model;
+//			    $model->add_parser_data( $_POST['post_id'], $data );
 
-		    default:
-			    wp_send_json_error( 'method not found' );
-	    }
+                wp_send_json_success( [
+                    'html' => "Quantity: {$data['y']}, Price: {$data['a1']}"
+                ] );
+
+            default:
+                wp_send_json_error( 'method not found' );
+        }
     }
 
     public function activation() {
@@ -135,7 +144,7 @@ class Parser_Manager_Loader {
     public function cron_schedules( $schedules ) {
         $schedules['five_minutes'] = [
             'interval' => 300,
-            'display' => 'Every 5 Minutes'
+            'display'  => 'Every 5 Minutes'
         ];
 
         return $schedules;
@@ -143,43 +152,42 @@ class Parser_Manager_Loader {
 
     private function settings() {
         // wp cron
-        if( ! wp_next_scheduled( 'parser_manager_add_to_queue' ) ) {
+        if ( ! wp_next_scheduled( 'parser_manager_add_to_queue' ) ) {
             wp_schedule_event( time(), 'hourly', 'parser_manager_add_to_queue' );
         }
-        if( ! wp_next_scheduled( 'parser_manager_queue_start' ) ) {
+        if ( ! wp_next_scheduled( 'parser_manager_queue_start' ) ) {
             wp_schedule_event( time(), 'five_minutes', 'parser_manager_queue_start' );
         }
     }
 
     public function add_to_queue() {
-        PM_Utils::log( 'test parser_manager_queue' );
-        $unix = time();
+        $unix   = time();
         $passed = $unix - 86400; // day
 
         $args = [
-            'post_type' => 'parser',
+            'post_type'  => 'parser',
             'meta_query' => [
                 [
                     'relation' => 'OR',
                     [
-                        'key' => 'parser_queue_added',
+                        'key'         => 'parser_queue_added',
                         'compare_key' => 'NOT EXISTS'
                     ],
                     [
-                        'key' => 'parser_queue_added',
-                        'value' => 1,
+                        'key'     => 'parser_queue_added',
+                        'value'   => 1,
                         'compare' => '!='
                     ]
                 ],
                 [
                     'relation' => 'OR',
                     [
-                        'key' => 'parser_last_run',
+                        'key'         => 'parser_last_run',
                         'compare_key' => 'NOT EXISTS'
                     ],
                     [
-                        'key' => 'parser_last_run',
-                        'value' => $passed,
+                        'key'     => 'parser_last_run',
+                        'value'   => $passed,
                         'compare' => '<='
                     ]
                 ]
@@ -194,12 +202,13 @@ class Parser_Manager_Loader {
             }
         }
     }
+
     public function queue_start() {
         $args = [
-            'post_type' => 'parser',
+            'post_type'  => 'parser',
             'meta_query' => [
                 [
-                    'key' => 'parser_queue_added',
+                    'key'   => 'parser_queue_added',
                     'value' => 1
                 ]
             ]
@@ -211,20 +220,20 @@ class Parser_Manager_Loader {
             return;
         }
 
-	    foreach ( $parsers as $parser ) {
-		    update_post_meta( $parser->ID, 'parser_queue_added', 0 );
-		    update_post_meta( $parser->ID, 'parser_last_run', time() );
+        foreach ( $parsers as $parser ) {
+            update_post_meta( $parser->ID, 'parser_queue_added', 0 );
+            update_post_meta( $parser->ID, 'parser_last_run', time() );
 
-			$data = $this->run_parser_by_id( $parser->ID );
+            $data = $this->run_parser_by_id( $parser->ID );
 
-		    if ( ! $data ) {
-			    PM_Utils::log( 'queue_start() | empty data' );
-			    $data = 'empty data';
-		    }
-
-		    $model = new Parser_Model;
-		    $model->add_parser_data( $parser->ID, $data );
-	    }
+            if ( $data ) {
+                $model = new Parser_Model;
+                $model->add_parser_data( $parser->ID, $data );
+                PMP_Utils::log( 'add_parser_data() | ' . $data, $parser->ID, true );
+            } else {
+                PMP_Utils::log( 'queue_start() | empty data', $parser->ID );
+            }
+        }
     }
 
     private function db_create() {

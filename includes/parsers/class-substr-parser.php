@@ -4,7 +4,11 @@ defined( 'ABSPATH' ) || exit;
 
 class Substr_Parser extends Parser {
 
-    public function start( $start, $end ): string {
+    public function __construct( $url = '' ) {
+        $this->set_url( $url );
+    }
+
+    public function run( $start, $end ): string {
         $html = $this->get_html();
 
         $delete_before = substr( $html, strpos( $html, $start ) + strlen( $start ) );

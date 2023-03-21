@@ -44,7 +44,7 @@ class Parser_Manager_Meta_Boxes {
 
 		$parser_method = get_post_meta( $post->ID, 'parser_method', true );
 		if ( array_key_exists( $parser_method, $parsers_names ) ) {
-			$parser = new $parsers_names[$parser_method];
+			$parser = new $parsers_names[$parser_method]();
 			$highcharts_data = $parser->get_highcharts_data( $post->ID, true );
 		}
 
