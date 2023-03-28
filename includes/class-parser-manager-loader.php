@@ -138,7 +138,6 @@ class Parser_Manager_Loader {
     public function activation() {
         $this->settings();
         $this->db_create();
-//        register_uninstall_hook( __FILE__, [ $this, 'delete_options' ] );
     }
 
     public function cron_schedules( $schedules ) {
@@ -248,12 +247,4 @@ class Parser_Manager_Loader {
 		);";
         $wpdb->query( $sql );
     }
-
-    public function delete_options() {
-//		global $wpdb;
-//
-//        delete_option( 'wp_simyz_chat_username' );
-//        $wpdb->query( "DROP TABLE IF EXISTS `" . $wpdb->prefix . "simyzchat_questions`;" );
-    }
-
 }
