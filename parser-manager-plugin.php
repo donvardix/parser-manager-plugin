@@ -3,9 +3,9 @@
 Plugin Name: Parser Manager
 Description: Parser Manager
 Author: donvardix
-Text Domain: parser-manager-plugin
+Text Domain: parser-manager
 Domain Path: /languages
-Version: 0.1.5
+Version: 0.1.6
 Author URI: https://github.com/donvardix
 License: GPLv2 or later
 */
@@ -29,11 +29,11 @@ License: GPLv2 or later
 defined( 'ABSPATH' ) || exit;
 
 define( 'PMP_PLUGIN_FILE', __FILE__ );
-define( 'PMP_VERSION', '0.1.5' );
+define( 'PMP_VERSION', '0.1.6' );
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-register_activation_hook( __FILE__, array( new Parser_Manager_Loader, 'activation' ) );
+register_activation_hook( __FILE__, [ new Parser_Manager_Loader, 'activation' ] );
 add_action( 'plugins_loaded', 'parser_manager_init' );
 
 function parser_manager_init() {
@@ -52,4 +52,7 @@ function parser_manager_uninstall() {
     global $wpdb;
 
     $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}pmp_parser_data" );
+
+    wp_clear_scheduled_hook( 'parser_manager_add_to_queue' );
+    wp_clear_scheduled_hook( 'parser_manager_queue_start' );
 }

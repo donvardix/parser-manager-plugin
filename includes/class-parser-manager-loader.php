@@ -31,20 +31,18 @@ class Parser_Manager_Loader {
             'parser',
             [
                 'labels'        => [
-                    'name'               => __( 'Parsers', 'wcpv-returns' ),
-                    'singular_name'      => __( 'Parser', 'wcpv-returns' ),
-                    'all_items'          => __( 'All Parsers', 'wcpv-returns' ),
-                    'search_items'       => __( 'Search Parsers', 'wcpv-returns' ),
-                    'not_found'          => __( 'No parsers found.', 'wcpv-returns' ),
-                    'not_found_in_trash' => __( 'No parsers found in Trash.', 'wcpv-returns' ),
-                    'menu_name'          => __( 'Parsers Manager', 'wcpv-returns' )
+                    'name'               => __( 'Parsers', 'parser-manager' ),
+                    'singular_name'      => __( 'Parser', 'parser-manager' ),
+                    'all_items'          => __( 'All Parsers', 'parser-manager' ),
+                    'search_items'       => __( 'Search Parsers', 'parser-manager' ),
+                    'not_found'          => __( 'No parsers found.', 'parser-manager' ),
+                    'not_found_in_trash' => __( 'No parsers found in Trash.', 'parser-manager' ),
+                    'menu_name'          => __( 'Parsers Manager', 'parser-manager' )
                 ],
                 'public'        => true,
-                'show_ui'       => true,
-                'has_archive'   => true,
-                'menu_icon'     => 'dashicons-feedback',
                 'menu_position' => 21,
-                'supports'      => [ 'title', 'author' ],
+                'menu_icon'     => 'dashicons-feedback',
+                'supports'      => [ 'title', 'author', 'revisions' ],
             ]
         );
     }
@@ -54,16 +52,16 @@ class Parser_Manager_Loader {
 
         add_submenu_page(
             'edit.php?post_type=parser',
-            __( 'Parser Manager Settings', 'plugin-name' ),
-            __( 'Settings', 'plugin-name' ),
+            __( 'Parser Manager Settings', 'parser-manager' ),
+            __( 'Settings', 'parser-manager' ),
             'manage_options',
             'parser-manager-settings.php',
             [ $frontend_settings, 'settings_page' ]
         );
         add_submenu_page(
             'edit.php?post_type=parser',
-            __( 'Parsers Test', 'plugin-name' ),
-            __( 'Parsers Test', 'plugin-name' ),
+            __( 'Parsers Test', 'parser-manager' ),
+            __( 'Parsers Test', 'parser-manager' ),
             'manage_options',
             'parsers-test.php',
             [ $frontend_settings, 'parsers_test_page' ]
@@ -143,7 +141,7 @@ class Parser_Manager_Loader {
     public function cron_schedules( $schedules ) {
         $schedules['five_minutes'] = [
             'interval' => 300,
-            'display'  => 'Every 5 Minutes'
+            'display'  => __( 'Every 5 Minutes', 'parser-manager' )
         ];
 
         return $schedules;
