@@ -51,7 +51,12 @@ class Steam_Parser extends Parser {
             if ( $response['searchdata']['query'] == $result['name'] ) {
                 return [
                     'y'  => $result['sell_listings'],
-                    'a1' => $result['sell_price_text'],
+                    'args' => [
+                        [
+                            'title' => 'Price',
+                            'value'=> $result['sell_price_text']
+                        ]
+                    ],
                 ];
             }
         }

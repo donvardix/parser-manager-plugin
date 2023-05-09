@@ -121,8 +121,8 @@ class Parser_Manager_Loader {
 
                 // todo move to add parser
 
-//			    $model = new Parser_Model;
-//			    $model->add_parser_data( $_POST['post_id'], $data );
+			    $model = new Parser_Model;
+			    $model->add_parser_data( $_POST['post_id'], $data );
 
                 wp_send_json_success( [
                     'html' => "Quantity: {$data['y']}, Price: {$data['a1']}"

@@ -39,13 +39,11 @@
                     pointFormatter: function() {
                         let text = this.series.name + ': ' + this.y;
 
-                        if ( this.a1 ) {
-                            text += '<br />Price: ' + this.a1
+                        if ( this.args ) {
+                            Object.values(this.args).forEach((item) => {
+                                text += '<br />' + item.title + ': ' + item.value
+                            });
                         }
-
-                        // if ( this.a2 ) {
-                        //     text += '<br />Price: ' + this.a2
-                        // }
 
                         return text;
                     }
