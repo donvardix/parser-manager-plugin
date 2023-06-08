@@ -1,10 +1,23 @@
 <?php
 
 
-$item_name = 'Gamma 2 Case';
-$url = 'https://steamcommunity.com/market/listings/440/Mann%20Co.%20Supply%20Crate%20Key';
+$url = 'https://steamcommunity.com/market/listings/730/Prisma%20Case';
 
 $steam_parser = new Steam_Parser;
-$data = $steam_parser->get_highcharts_data( 8440, true );
+$steam_parser->parse_url( $url );
 
-die( '<pre>' . print_r( $data, true ) . '</pre>' );
+//die( '<pre>' . print_r( $data, true ) . '</pre>' );
+
+$count = 0;
+$total = 1000;
+for ( $i = 0; $i < $total; $i++ ) {
+    $res = $steam_parser->run( 'sell_listings' );
+    $count++;
+
+    if ( ! $res ) {
+        PMP_Utils::log( 'TEST -- END --', $count );
+        break;
+    }
+
+    PMP_Utils::log( 'TEST', [ 'Count: ' . $count . ' || ', $res ], true );
+}
